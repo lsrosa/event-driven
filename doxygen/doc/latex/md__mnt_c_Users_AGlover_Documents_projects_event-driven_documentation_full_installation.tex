@@ -1,0 +1,229 @@
+These installation instructions are for first time users of Y\+A\+RP and specifically for compiling from sources in a linux environment. The instructions for installing Y\+A\+RP can be found \href{http://wiki.icub.org/wiki/Linux:Installation_from_sources}{\tt here} and are repeated here for completeness. For any problems please check the official instructions.
+
+\subsection*{Install Y\+A\+RP}
+
+set up the required environment variables.
+
+We will assume that you are installing Y\+A\+RP in the directory \$\+P\+R\+O\+J\+E\+C\+TS -\/ for example this could be your home directory. Use your favourite text editor to open $\sim$/.bashrc and add the following lines\+:
+
+
+\begin{DoxyItemize}
+\item export Y\+A\+R\+P\+\_\+\+R\+O\+OT=\$\+P\+R\+O\+J\+E\+C\+TS/yarp
+\item export Y\+A\+R\+P\+\_\+\+D\+IR=\$\+Y\+A\+R\+P\+\_\+\+R\+O\+OT/build
+\item export I\+C\+U\+Bcontrib\+\_\+\+D\+IR=\$\+P\+R\+O\+J\+E\+C\+TS/icub-\/contrib-\/install
+\item export Y\+A\+R\+P\+\_\+\+D\+A\+T\+A\+\_\+\+D\+I\+RS=\$\+Y\+A\+R\+P\+\_\+\+D\+IR/share/yarp\+:\$\+I\+C\+U\+Bcontrib\+\_\+\+D\+IR/share/\+I\+C\+U\+Bcontrib
+\item export P\+A\+TH=\$\+P\+A\+TH\+:\$\+Y\+A\+R\+P\+\_\+\+D\+IR/bin\+:\$\+I\+C\+U\+Bcontrib\+\_\+\+D\+IR/bin
+\end{DoxyItemize}
+
+replace \$\+P\+R\+O\+J\+E\+C\+TS with your desired directory.
+
+get all dependencies
+
+\begin{quote}
+sudo sh -\/c \textquotesingle{}echo \char`\"{}deb http\+://www.\+icub.\+org/ubuntu xenial contrib/science\char`\"{} $>$ /etc/apt/sources.list.\+d/icub.list\textquotesingle{} \end{quote}
+
+
+\begin{quote}
+sudo apt update \end{quote}
+
+
+\begin{quote}
+sudo apt install icub-\/common \end{quote}
+
+
+get the repositories
+
+\begin{quote}
+cd \$\+P\+R\+O\+J\+E\+C\+TS \end{quote}
+
+
+\begin{quote}
+git clone \href{https://github.com/robotology/yarp.git}{\tt https\+://github.\+com/robotology/yarp.\+git} \end{quote}
+
+
+\begin{quote}
+git clone \href{https://github.com/robotology/icub-contrib-common.git}{\tt https\+://github.\+com/robotology/icub-\/contrib-\/common.\+git} \end{quote}
+
+
+\begin{quote}
+git clone \href{https://github.com/robotology/event-driven.git}{\tt https\+://github.\+com/robotology/event-\/driven.\+git} \end{quote}
+
+
+build the repositories
+
+\begin{quote}
+cd \$\+Y\+A\+R\+P\+\_\+\+R\+O\+OT \end{quote}
+
+
+\begin{quote}
+mkdir build \&\& cd build \end{quote}
+
+
+\begin{quote}
+ccmake .. \end{quote}
+
+
+set the following variables, pressing \mbox{[}c\mbox{]} to configure until all options are shown\+:
+
+
+\begin{DoxyItemize}
+\item C\+R\+E\+A\+T\+E\+\_\+\+G\+U\+IS ON
+\item C\+R\+E\+A\+T\+E\+\_\+\+L\+I\+B\+\_\+\+M\+A\+TH ON
+\item C\+R\+E\+A\+T\+E\+\_\+\+Y\+A\+R\+P\+D\+A\+T\+A\+D\+U\+M\+P\+ER ON
+\item C\+R\+E\+A\+T\+E\+\_\+\+Y\+A\+R\+P\+D\+A\+T\+A\+P\+L\+A\+Y\+ER ON
+\item C\+R\+E\+A\+T\+E\+\_\+\+Y\+A\+R\+P\+L\+O\+G\+G\+ER ON
+\item C\+R\+E\+A\+T\+E\+\_\+\+Y\+A\+R\+P\+M\+A\+N\+A\+G\+ER ON
+\item C\+R\+E\+A\+T\+E\+\_\+\+Y\+A\+R\+P\+S\+C\+O\+PE ON
+\item C\+R\+E\+A\+T\+E\+\_\+\+Y\+A\+R\+P\+V\+I\+EW ON
+\end{DoxyItemize}
+
+if you are using the icub robot also turn on\+:
+
+
+\begin{DoxyItemize}
+\item C\+R\+E\+A\+T\+E\+\_\+\+Y\+A\+R\+P\+M\+O\+T\+O\+R\+G\+UI ON
+\item C\+R\+E\+A\+T\+E\+\_\+\+Y\+A\+R\+P\+R\+O\+B\+O\+T\+I\+N\+T\+E\+R\+F\+A\+CE ON
+\end{DoxyItemize}
+
+finally press \mbox{[}g\mbox{]} to generate the makefile.
+
+\begin{quote}
+make -\/j4 \end{quote}
+
+
+\begin{quote}
+cd ../.. \end{quote}
+
+
+\begin{quote}
+cd icub-\/contrib-\/common \end{quote}
+
+
+\begin{quote}
+mkdir build \&\& cd build \end{quote}
+
+
+\begin{quote}
+ccmake .. \end{quote}
+
+
+set the following variables
+
+
+\begin{DoxyItemize}
+\item C\+M\+A\+K\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+\_\+\+P\+R\+E\+F\+IX=\$\+I\+C\+U\+Bcontrib\+\_\+\+D\+IR
+\end{DoxyItemize}
+
+press \mbox{[}c\mbox{]} to configure and \mbox{[}g\mbox{]} to generate
+
+\begin{quote}
+make install -\/j4 \end{quote}
+
+
+\begin{quote}
+cd ../.. \end{quote}
+
+
+\begin{quote}
+cd event-\/driven \end{quote}
+
+
+\begin{quote}
+mkdir build \&\& cd build \end{quote}
+
+
+\begin{quote}
+ccmake .. \end{quote}
+
+
+set the following variables, pressing \mbox{[}c\mbox{]} to configure until all options are shown\+:
+
+
+\begin{DoxyItemize}
+\item B\+U\+I\+L\+D\+\_\+\+P\+R\+O\+C\+E\+S\+S\+I\+NG ON
+\item B\+U\+I\+L\+D\+\_\+\+A\+P\+P\+L\+I\+C\+A\+T\+I\+O\+NS ON
+\end{DoxyItemize}
+
+select any of the applications you want to build by setting them to ON. If you need to interface to hardware (e.\+g. using the zynq\+Grabber), please also set\+:
+
+
+\begin{DoxyItemize}
+\item B\+U\+I\+L\+D\+\_\+\+P\+R\+O\+C\+E\+S\+S\+I\+NG ON
+\end{DoxyItemize}
+
+and select which modules you need. In addition several options need to be set in regards to the hardware parameters, which will also need to be correct for pre-\/recorded sequences.
+
+\begin{quote}
+V\+L\+I\+B\+\_\+\+C\+L\+O\+C\+K\+\_\+\+P\+E\+R\+I\+O\+D\+\_\+\+NS 80 \end{quote}
+
+
+\begin{quote}
+V\+L\+I\+B\+\_\+\+C\+O\+D\+E\+C\+\_\+128x128 O\+FF \end{quote}
+
+
+\begin{quote}
+V\+L\+I\+B\+\_\+\+T\+I\+M\+E\+R\+\_\+\+B\+I\+TS 24 \end{quote}
+
+
+These are customisable for your hardware, specifying the event timing and the decoding method, which is different for the 128x128 resolution D\+VS and a higher resolution camera.
+
+Press \mbox{[}g\mbox{]} to generate the makefile.
+
+\begin{quote}
+make install -\/j4 \end{quote}
+
+
+completed.
+
+\subsection*{Install icub-\/main (optional)}
+
+This is only needed if you are going to work with an icub robot and is not needed if you want to use the event-\/driven library as a stand-\/alone project.
+
+Add the following environment variables (e.\+g. in $\sim$/.bashrc)\+:
+
+
+\begin{DoxyItemize}
+\item export I\+C\+U\+B\+\_\+\+R\+O\+OT=\$\+P\+R\+O\+J\+E\+C\+TS/icub-\/main
+\item export I\+C\+U\+B\+\_\+\+D\+IR=\$\+I\+C\+U\+B\+\_\+\+R\+O\+OT/build
+\item export Y\+A\+R\+P\+\_\+\+D\+A\+T\+A\+\_\+\+D\+I\+RS=\$\+Y\+A\+R\+P\+\_\+\+D\+A\+T\+A\+\_\+\+D\+I\+RS\+:\$\+I\+C\+U\+B\+\_\+\+D\+IR/share/icub
+\item export P\+A\+TH=\$\+P\+A\+TH\+:\$\+I\+C\+U\+B\+\_\+\+D\+IR/bin
+\end{DoxyItemize}
+
+in the \$\+P\+R\+O\+J\+E\+C\+TS directory
+
+\begin{quote}
+git clone \href{https://github.com/robotology/icub-main.git}{\tt https\+://github.\+com/robotology/icub-\/main.\+git} \end{quote}
+
+
+\begin{quote}
+cd icub-\/main \end{quote}
+
+
+\begin{quote}
+mkdir build \&\& cd build \end{quote}
+
+
+\begin{quote}
+ccmake .. \end{quote}
+
+
+set the following variables, pressing \mbox{[}c\mbox{]} to configure until all options are shown\+:
+
+
+\begin{DoxyItemize}
+\item E\+N\+A\+B\+L\+E\+\_\+icubmod\+\_\+cartesiancontrollerclient ON
+\item E\+N\+A\+B\+L\+E\+\_\+icubmod\+\_\+cartesiancontrollerserver ON
+\item E\+N\+A\+B\+L\+E\+\_\+icubmod\+\_\+gazecontrollerclient ON
+\end{DoxyItemize}
+
+finally press \mbox{[}g\mbox{]} to generate.
+
+\begin{quote}
+make -\/j4 \end{quote}
+
+
+completed
+
+\subsection*{Test Installation}
+
+To test your installation is correct please follow the \char`\"{}\+Getting started with the viewer\char`\"{} tutorial \href{http://robotology.github.io/event-driven/doxygen/doc/html/pages.html}{\tt here}. 

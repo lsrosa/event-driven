@@ -1,0 +1,66 @@
+Visualise a stream of events from the cameras / from a pre-\/recorded sequence.
+
+\subsection*{Description}
+
+This application demonstrates how to visualise a stream of address events either from the cameras or from a pre-\/recorded sequence. The event stream is transmitted from the cameras (/zynq\+Grabber/\+AE\+:o) to the v\+Pre\+Process (/v\+Pre\+Process/\+AE\+:i), that removes salt-\/and-\/pepper noise from the event stream. The filtered stream (/v\+Pre\+Process/left\+:o and /v\+Pre\+Process/right\+:o) is sent to v\+Framer (/v\+Framer/left/\+AE\+:i), that converts it to a yarpview-\/able image. The \char`\"{}images\char`\"{} from left (/v\+Framer/left/image\+:o) and right camera (/v\+Framer/right/image\+:o) are then sent to the yarp viewers (/view\+Ch0 and /view\+Ch1).
+
+Here is a visualisation of the instantiated modules and connections.
+
+
+
+\subsection*{Dependencies}
+
+No special dependencies are required, all the required modules will be executed by the application.
+
+\subsection*{How to run the application}
+
+These are basic instructions for first time Y\+A\+RP users, assuming the comprehensive instructions have been followed.
+
+
+\begin{DoxyItemize}
+\item copy the application template into the yarpmanager search path, removing the .template extension
+\end{DoxyItemize}
+
+\begin{quote}
+cp \$\+I\+C\+U\+Bcontrib\+\_\+\+D\+IR/share/\+I\+C\+U\+Bcontrib/templates/applications/app\+\_\+v\+View.xml.\+template $\sim$/.local/share/yarp/applications/app\+\_\+v\+View.\+xml \end{quote}
+
+
+
+\begin{DoxyItemize}
+\item download the sample dataset from \href{https://doi.org/10.5281/zenodo.2556755}{\tt here} and unpack to a location of your choosing.
+\item run a yarpserver
+\end{DoxyItemize}
+
+\begin{quote}
+yarpserver \end{quote}
+
+
+
+\begin{DoxyItemize}
+\item (in a seperate terminal) run a yarpdataplayer
+\end{DoxyItemize}
+
+\begin{quote}
+yarpdataplayer \end{quote}
+
+
+
+\begin{DoxyItemize}
+\item in the yarpdataplayer gui, open the downloaded datsets (File-\/$>$open) by pressing \char`\"{}\+Choose\char`\"{} on the upper-\/level folder (e.\+g. folder name\+: fasthandtrim)
+\item the dataset should be open in the yarpdataplayer window with a \char`\"{}\+Port Name\char`\"{} of \char`\"{}/zynq\+Grabber/\+A\+E\+:o\char`\"{}.
+\item (in a separate terminal) run a yarpmanager
+\end{DoxyItemize}
+
+\begin{quote}
+yarpmanager \end{quote}
+
+
+
+\begin{DoxyItemize}
+\item the yarpmanager gui should be open.
+\item on the entities tab (left) open the \char`\"{}\+Applications\char`\"{} folder -\/ the v\+View application should be visible. Double click the v\+View application to load it.
+\item run all the modules in the v\+View app by choosing \char`\"{}\+Run All\char`\"{} in the left-\/most vertical toolbar. All applications should become green.
+\item connect all yarp ports by choosing \char`\"{}\+Connect All\char`\"{} in the same toolbar. All connections should turn green.
+\item press \char`\"{}\+Play\char`\"{} on the yarpdataplayer. The dataset should be visible in the yarpview windows (split into left and right cameras).
+\item To close all applications first \char`\"{}\+Disconnect All\char`\"{} and then \char`\"{}\+Close All\char`\"{} on the left-\/hand toolbar. G\+UI\textquotesingle{}s are closed as per a normal window. The yarpserver can be closed using \char`\"{}ctrl+c\char`\"{} in the appropriate terminal. 
+\end{DoxyItemize}

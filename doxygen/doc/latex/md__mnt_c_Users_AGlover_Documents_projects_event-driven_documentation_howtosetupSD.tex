@@ -1,0 +1,229 @@
+\subsection*{Set-\/up icub user}
+
+(as root)
+
+\begin{quote}
+adduser icub \end{quote}
+
+
+\begin{quote}
+groups icub \end{quote}
+
+
+\begin{quote}
+visudo \end{quote}
+
+
+
+\begin{DoxyItemize}
+\item add line\+: \char`\"{}icub A\+L\+L=(\+A\+L\+L\+:\+A\+L\+L) A\+L\+L\char`\"{}
+\end{DoxyItemize}
+
+\begin{quote}
+mkdir /usr/local/src/robot \end{quote}
+
+
+\begin{quote}
+chown icub /usr/local/src/robot \end{quote}
+
+
+\subsection*{Set up repositories}
+
+(as icub)
+
+\begin{quote}
+mkdir /usr/local/src/robot/icub-\/contrib-\/install \end{quote}
+
+
+\begin{quote}
+vim $\sim$/.bashrc \end{quote}
+
+
+add lines\+:
+
+
+\begin{DoxyItemize}
+\item export R\+O\+B\+O\+T\+\_\+\+C\+O\+DE=/usr/local/src/robot
+\item export Y\+A\+R\+P\+\_\+\+D\+IR=\$\+R\+O\+B\+O\+T\+\_\+\+C\+O\+DE/yarp/build
+\item export I\+C\+U\+Bcontrib\+\_\+\+D\+IR=\$\+R\+O\+B\+O\+T\+\_\+\+C\+O\+DE/icub-\/contrib-\/install
+\item export Y\+A\+R\+P\+\_\+\+D\+A\+T\+A\+\_\+\+D\+I\+RS=\$\+Y\+A\+R\+P\+\_\+\+D\+IR/share/yarp\+:\$\+I\+C\+U\+Bcontrib\+\_\+\+D\+IR/share/\+I\+C\+U\+Bcontrib
+\item export P\+A\+TH=\$\+Y\+A\+R\+P\+\_\+\+D\+IR/bin\+:\$\+I\+C\+U\+Bcontrib\+\_\+\+D\+IR/bin\+:\$\+P\+A\+TH
+\item export E\+D\+\_\+\+R\+O\+OT=\$\+R\+O\+B\+O\+T\+\_\+\+C\+O\+DE/event-\/driven
+\end{DoxyItemize}
+
+\subsubsection*{Set up Y\+A\+RP}
+
+\begin{quote}
+cd /usr/local/src/robot \end{quote}
+
+
+\begin{quote}
+git clone \href{https://github.com/robotology/yarp}{\tt https\+://github.\+com/robotology/yarp} \end{quote}
+
+
+\begin{quote}
+cd yarp \end{quote}
+
+
+\begin{quote}
+mkdir build \end{quote}
+
+
+\begin{quote}
+cd build \end{quote}
+
+
+\begin{quote}
+ccmake ../ \end{quote}
+
+
+
+\begin{DoxyItemize}
+\item set C\+R\+E\+A\+T\+E\+\_\+\+G\+U\+IS = O\+FF
+\end{DoxyItemize}
+
+\begin{quote}
+make (not install) \end{quote}
+
+
+\subsubsection*{Set up install directory as \$\+I\+C\+U\+Bcontrib\+\_\+\+D\+IR}
+
+\begin{quote}
+cd /usr/local/src/robot \end{quote}
+
+
+\begin{quote}
+git clone \href{https://github.com/robotology/icub-contrib-common}{\tt https\+://github.\+com/robotology/icub-\/contrib-\/common} \end{quote}
+
+
+\begin{quote}
+cd icub-\/contrib-\/common \end{quote}
+
+
+\begin{quote}
+mkdir build \end{quote}
+
+
+\begin{quote}
+cd build \end{quote}
+
+
+\begin{quote}
+ccmake ../ \end{quote}
+
+
+
+\begin{DoxyItemize}
+\item set C\+M\+A\+K\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+\_\+\+D\+IR=\$\+I\+C\+U\+Bcontrib\+\_\+\+D\+IR
+\end{DoxyItemize}
+
+\begin{quote}
+make install \end{quote}
+
+
+\subsubsection*{Set up event-\/driven}
+
+\begin{quote}
+cd /usr/local/src/robot \end{quote}
+
+
+\begin{quote}
+git clone \href{https://github.com/robotology/event-driven}{\tt https\+://github.\+com/robotology/event-\/driven} \end{quote}
+
+
+\begin{quote}
+cd event-\/driven \end{quote}
+
+
+\begin{quote}
+mkdir build \end{quote}
+
+
+\begin{quote}
+cd build \end{quote}
+
+
+\begin{quote}
+ccmake ../ \end{quote}
+
+
+
+\begin{DoxyItemize}
+\item (cmake should have found install directory as \$\+I\+C\+U\+Bcontrib\+\_\+\+D\+IR automatically)
+\end{DoxyItemize}
+
+\begin{quote}
+make install \end{quote}
+
+
+\subsection*{Set up device drivers}
+
+(as icub)
+
+\begin{quote}
+sudo usermod -\/a -\/G i2c icub \end{quote}
+
+
+\begin{quote}
+sudo vim /lib/udev/rules.d/77-\/iit-\/hpu.\+rules \end{quote}
+
+
+add lines\+:
+
+
+\begin{DoxyItemize}
+\item S\+U\+B\+S\+Y\+S\+T\+EM==\char`\"{}iit-\/hpu-\/class\char`\"{}, G\+R\+O\+UP=\char`\"{}i2c\char`\"{}
+\end{DoxyItemize}
+
+\begin{quote}
+sudo vim /etc/rc.local \end{quote}
+
+
+add lines\+:
+
+
+\begin{DoxyItemize}
+\item insmod \$\+P\+A\+T\+H\+\_\+\+T\+O\+\_\+\+H\+P\+U\+\_\+\+D\+R\+I\+V\+E\+R.\+ko ps=4096
+\item \$\+P\+A\+T\+H\+\_\+\+T\+O\+\_\+\+Z\+Y\+N\+Q\+G\+R\+A\+B\+B\+ER --biaswrite $>$ /usr/local/src/robot/zynq\+Grabber.log
+\end{DoxyItemize}
+
+\subsection*{Misc}
+
+check the device driver meta data
+
+\begin{quote}
+udevadm info -\/q all -\/a /dev/iit-\/hpu0 \end{quote}
+
+
+check the device driver parameters
+
+\begin{quote}
+cat /sys/module/iit\+\_\+hpucore\+\_\+dma/parameters/ps \end{quote}
+
+
+\section*{How copy an entire sd-\/card for a new board}
+
+\subsection*{P\+A\+R\+T\+I\+T\+I\+ON T\+HE N\+EW SD}
+
+
+\begin{DoxyItemize}
+\item insert the new SD
+\item sudo gparted (sudo apt-\/get install gparted if needed)
+\item gparted G\+UI should detect the SD
+\item unmount the SD in gparted G\+UI (you cannot partition a mounted drive)
+\item create new partitions\+: 1. F\+A\+T32 name\+:B\+O\+OT 50\+MiB 2. E\+X\+T4 name\+:rootfs (max-\/250) 3. linux-\/swap name\+:swap 200\+MiB
+\item edit -\/$>$ apply all operations
+\end{DoxyItemize}
+
+\subsection*{C\+O\+PY T\+HE F\+I\+L\+ES}
+
+
+\begin{DoxyItemize}
+\item insert old SD (mount the boot and filesystem partitions)
+\item copy B\+O\+OT (old) -\/$>$ B\+O\+OT (new) (use /tmp as a temporary location to store files if you cannot mount both SD cards simultaneously)
+\item sudo tar zcvf filesystem.\+tgz /media/\$username/rootfs (from the old SD -\/ again do this in /tmp)
+\item sudo sync (ensure files are copied by flushing file writing queue)
+\item cd /media/\$username/rootfs (on the new SD)
+\item sudo tar zxvf /tmp/filesystem.tgz --strip-\/components=3
+\item sudo sync 
+\end{DoxyItemize}

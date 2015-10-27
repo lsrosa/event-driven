@@ -1,0 +1,60 @@
+Events are serialised and coded in a standardised format for sending and receiving between modules. In addition a packet containing multiple different types of events is segmented by event-\/type such that a search can quickly retrieve events of only a specific type. The packet is formed as such\+:
+
+\begin{quote}
+E\+V\+E\+N\+T\+T\+Y\+P\+E-\/1-\/\+T\+AG ( serialised and concatinated events of type 1) E\+V\+E\+N\+T\+T\+Y\+P\+E-\/2-\/\+T\+AG ( serialised and concatinated events of type 2) ... \end{quote}
+
+
+Each event class defines the T\+AG used to identify itself and also the method with which the event data is serialised. Managing the serialisation and de-\/serialisation of the event data is then simply a case of using the event class to write/read its T\+AG and then call its encode/decode functions on the serialised data. The eventdriven\+::v\+Bottle class handles the coding of packets in the event-\/driven project.
+
+Events are defined in a class hierarchy, with each child class calling its parent encode/decode function before its own. Adding a new event therefore only requires defining the serialisation method for any new data that the event-\/class contains (e.\+g. the Flow event only defines how the velocities are encoded and calls its parent class, the Adress\+Event, to encode other information, such as position and timestamp).
+
+ \section*{Event Coding Definitions}
+
+The {\bfseries v\+Event} uses 4 bytes to encode a timestamp ({\itshape T})
+
+\begin{quote}
+\mbox{[}10000000 T\+T\+T\+T\+T\+TT T\+T\+T\+T\+T\+T\+TT T\+T\+T\+T\+T\+T\+TT\mbox{]} \end{quote}
+
+
+An {\bfseries Address\+Event} uses 4 bytes to encode position ({\itshape X}, {\itshape Y}), polarity ({\itshape P}) and channel ({\itshape C}). Importantly as Address\+Event is of type v\+Event the timestamp information of this event is always encoded as well.
+
+\begin{quote}
+\mbox{[}00000000 00000000 C\+Y\+Y\+Y\+Y\+Y\+YY X\+X\+X\+X\+X\+X\+XP\mbox{]} \end{quote}
+
+
+or, if the {\bfseries V\+L\+I\+B\+\_\+10\+B\+I\+T\+C\+O\+D\+EC} cmake flag is set {\bfseries ON} (used for the A\+T\+IS camera) the Address\+Event is encoded as\+:
+
+\begin{quote}
+\mbox{[}00000000 000\+C00\+YY Y\+Y\+Y\+Y\+Y\+Y\+XX X\+X\+X\+X\+X\+X\+XP\mbox{]} \end{quote}
+
+
+A {\bfseries Flow\+Event} uses 8 bytes to encode velocity (ẋ, ẏ), each 4 bytes represent a {\itshape float}. Similarly as Flow\+Event is of time Address\+Event the Flow\+Event also encodes all the position and timestamp information above.
+
+\begin{quote}
+\mbox{[}ẋẋẋẋẋẋẋẋ ẋẋẋẋẋẋẋẋ ẏẏẏẏẏẏẏẏ ẏẏẏẏẏẏẏẏ\mbox{]} \end{quote}
+
+
+A {\bfseries Labelled\+AE} is labelled as belonging to a group ID ({\itshape I}) using a 4 byte {\itshape int}.
+
+\begin{quote}
+\mbox{[}I\+I\+I\+I\+I\+I\+I\+II I\+I\+I\+I\+I\+I\+I\+II I\+I\+I\+I\+I\+I\+I\+II I\+I\+I\+I\+I\+I\+I\+II\mbox{]} \end{quote}
+
+
+A {\bfseries Gaussian\+AE} extends a cluster event with a 2 dimensional Gaussian distribution parameterised by ({\itshape sx}, {\itshape sy}, {\itshape sxy}) using a total of 12 bytes.
+
+\begin{quote}
+\mbox{[}sxsxsxsxsxsxsxsx sxsxsxsxsxsxsxsx sxsxsxsxsxsxsxsx sxsxsxsxsxsxsxsx sysysysysysysysy sysysysysysysysy sysysysysysysysy sysysysysysysysy sxysxysxysxysxysxysxysxy sxysxysxysxysxysxysxysxy sxysxysxysxysxysxysxysxy sxysxysxysxysxysxysxysxy\mbox{]} \end{quote}
+
+
+\section*{Coding in Y\+A\+RP}
+
+The eventdriven\+::v\+Bottle class wraps the encoding and decoding operations into a yarp\+::os\+::\+Bottle such that an example v\+Bottle will appear as\+:
+
+\begin{quote}
+AE (-\/2140812352 15133 -\/2140811609 13118) F\+L\+OW (-\/2140812301 13865 -\/1056003417 -\/1055801578) \end{quote}
+
+
+{\itshape N\+O\+TE\+: The actual data sent by Y\+A\+RP for a bottle includes signifiers for data type and data length, adding extra data to the bottle as above.}
+
+\begin{quote}
+256 4 4 2 \textquotesingle{}A\textquotesingle{} \textquotesingle{}E\textquotesingle{} 257 4 -\/2140812352 15133 -\/2140811609 13118 4 4 \textquotesingle{}F\textquotesingle{} \textquotesingle{}L\textquotesingle{} \textquotesingle{}O\textquotesingle{} \textquotesingle{}W\textquotesingle{} 257 4 -\/2140812301 13865 -\/1056003417 -\/1055801578\end{quote}
