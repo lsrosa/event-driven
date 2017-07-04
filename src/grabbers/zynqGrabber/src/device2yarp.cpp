@@ -35,12 +35,47 @@ void  device2yarp::run() {
     //get the data from the device read thread
     int nBytesRead = 0;
     const std::vector<char> &data = devManager->readDevice(nBytesRead);
+
+    if(nBytesRead % 4)
+        std::cout << "ERROR: not a multiple of 4";
+    countAEs += nBytesRead / 8;
+    
+
+    if(yarp::os::Time::now() - prevTS > 10) {
+        std::cout << "ZynqGrabber running happily: " << countAEs
+                  << " events" << std::endl;
+        prevTS = yarp::os::Time::now();
+    }
+
     if (!nBytesRead) return;
 
     if(nBytesRead > devManager->getBufferSize()*0.75) {
         std::cerr << "Software buffer was over 3/4 full - check the "
                      "device2yarp thread is not delayed" << std::endl;
     }
+
+    static double prevYT = yarp::os::Time::now();
+    static int    prevTS = 0;
+    for(int i = 0; i < nBytesRead; i+=8) {
+        int *TS =  (int *)(data.data() + i);
+        int *AE =  (int *)(data.data() + i + 4);
+        *AE = (*AE & 0x1FFFF) << 1;
+        double currYT = yarp::os::Time::now();
+        *TS = (int)((currYT - prevYT) * 12500000.0) + prevTS;
+        //*TS = 50 + prevTS;
+        prevYT = currYT;
+        prevTS = *TS;
+    }
+
+
+    sender.setdata(data.data(), nBytesRead);
+    vStamp.update();
+    portvBottle.setEnvelope(vStamp);
+    portvBottle.write(sender); //port is always strict
+
+    return;
+    
+
 
     int bstart = 0;
     int bend = 0;
@@ -58,7 +93,7 @@ void  device2yarp::run() {
                 std::cerr << "BITMISMATCH in yarp2device" << std::endl;
                 std::cerr << *TS << " " << *AE << std::endl;
                 sender.setdata(data.data()+bstart, bend-bstart);
-                countAEs += (bend - bstart) / 8;
+                //countAEs += (bend - bstart) / 8;
                 vStamp.update();
                 portvBottle.setEnvelope(vStamp);
                 portvBottle.write(sender); //port is always strict
@@ -113,17 +148,12 @@ void  device2yarp::run() {
 
     if(nBytesRead - bstart > 7) {
         sender.setdata(data.data()+bstart, 8*((nBytesRead-bstart)/8));
-        countAEs += (nBytesRead - bstart) / 8;
+        //countAEs += (nBytesRead - bstart) / 8;
         vStamp.update();
         portvBottle.setEnvelope(vStamp);
         portvBottle.write(sender); //port is always strict
     }
 
-    if(yarp::os::Time::now() - prevTS > 10) {
-        std::cout << "ZynqGrabber running happily: " << countAEs
-                  << " events" << std::endl;
-        prevTS = yarp::os::Time::now();
-    }
 
 }
 

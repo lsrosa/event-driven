@@ -32,6 +32,7 @@ bool yarp2device::open(std::string moduleName)
     //setFileDesc(devDesc);
 
     this->useCallback();
+    this->setStrict();
 
     fprintf(stdout,"opening port for receiving the events from yarp \n");
 
@@ -165,6 +166,48 @@ void yarp2device::interrupt()
 void yarp2device::onRead(emorph::vBottle &bot)
 {
 
+    yarp::os::Bottle *converted = (yarp::os::Bottle *)(&bot);
+    yarp::os::Bottle *content = converted->get(1).asList();
+    int nints = content->size();
+    const int * directaccess = (const int *)(content->toBinary());
+    directaccess++; //the first int is the size -> so skip it!!
+
+    deviceData.resize(nints);
+    countAEs += nints / 2;
+    
+    deviceData[0] = 0;
+    deviceData[1] = ((directaccess[1] >> 1) & 0x1FFFF) | 0x00100000;
+
+    for(size_t i = 2; i < nints; i += 2) {
+        //int dt = (directaccess[i] & 0xFFFF) - (directaccess[i-2] & 0xFFFF);
+        //if(dt < 0) dt += 0xFFFF;
+        deviceData[i] = 0;
+        deviceData[i+1] = ((directaccess[i+1] >> 1) & 0x1FFFF) | 0x00100000;
+    } 
+
+    //int datawritten = nints;
+    int datawritten = devManager->writeDevice(deviceData); 
+
+    if(datawritten <= 0)
+        yError() << "Could not write to device";
+    else {
+        writtenAEs += datawritten/2;
+        if(datawritten != deviceData.size())
+            yWarning() << "Did not write all data: " << datawritten << " / " << deviceData.size();
+    }
+
+    static int messagedelay = 0;
+    if(messagedelay++ > 500) {
+        messagedelay = 0;
+        //std::cout << writtenAEs << " events written to device" << std::endl;
+        yInfo() << writtenAEs << "events written. Example:" << 
+                   deviceData[2] <<  deviceData[3];
+    }
+
+    return;
+	
+
+
     emorph::vQueue q = bot.getAll();
     deviceData.resize(q.size()*2);  // deviceData has TS and ADDRESS, its size is double the number of events
     countAEs += q.size(); // counter for total number of events received from yarp port for the whole duration of the thread
@@ -227,8 +270,8 @@ void yarp2device::onRead(emorph::vBottle &bot)
     flagStart = false; // workaround for long delays due to large delta ts across bottles
     // write to the device
 
-    int wroteData = devManager->writeDevice(deviceData); // wroteData is the number of data written to the FIFO (double the amount of events)
 
+    int wroteData = devManager->writeDevice(deviceData); // wroteData is the number of data written to the FIFO (double the amount of events)
     //    std::cout<<"Y2D write: writing to device"<<deviceData.size()<< "elements"<<std::endl;
     //    std::cout<<"Y2D write: wrote to device"<<wroteData<< "elements"<<std::endl;
     if (wroteData <= 0)

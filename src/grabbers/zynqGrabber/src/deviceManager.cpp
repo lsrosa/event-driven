@@ -724,6 +724,8 @@ bool aerDevManager::openDevice(){
 
             rem = 1;
 
+        } else {
+            std::cout << "No Loopback set" << std::endl;
         }
 
         ioctl(devDesc, AER_SET_LOC_LBCK, loc);
