@@ -36,8 +36,8 @@ void  device2yarp::run() {
     int nBytesRead = 0;
     const std::vector<char> &data = devManager->readDevice(nBytesRead);
 
-    if(nBytesRead % 4)
-        std::cout << "ERROR: not a multiple of 4";
+    if(nBytesRead % 8)
+        std::cout << "ERROR: not a multiple of 8";
     countAEs += nBytesRead / 8;
     
 
@@ -57,14 +57,19 @@ void  device2yarp::run() {
     static double prevYT = yarp::os::Time::now();
     static int    prevTS = 0;
     for(int i = 0; i < nBytesRead; i+=8) {
-        int *TS =  (int *)(data.data() + i);
+        //int *TS =  (int *)(data.data() + i);
         int *AE =  (int *)(data.data() + i + 4);
         *AE = (*AE & 0x1FFFF) << 1;
-        double currYT = yarp::os::Time::now();
-        *TS = (int)((currYT - prevYT) * 12500000.0) + prevTS;
-        //*TS = 50 + prevTS;
-        prevYT = currYT;
-        prevTS = *TS;
+        //double currYT = yarp::os::Time::now();
+        //*TS = (int)((currYT - prevYT) * 12500000.0) + prevTS;
+        //prevYT = currYT;
+        //prevTS = *TS;
+    }
+
+    static int skipper = 0;
+    if(skipper++ == 3000) {
+        yInfo() << "Example read: " << (*(int *)data.data()&0x7FFFFFFF) << *(int *)(data.data() + 4);
+        skipper = 0;
     }
 
 
