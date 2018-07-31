@@ -56,7 +56,7 @@ void  device2yarp::run() {
 
     static double prevYT = yarp::os::Time::now();
     static int    prevTS = 0;
-    for(int i = 0; i < nBytesRead; i+=8) {
+    for(int i = 0; i < 0; i+=8) {
         //int *TS =  (int *)(data.data() + i);
         int *AE =  (int *)(data.data() + i + 4);
         *AE = (*AE & 0x1FFFF) << 1;

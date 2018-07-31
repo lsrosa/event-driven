@@ -176,9 +176,8 @@ void yarp2device::onRead(emorph::vBottle &bot)
     countAEs += nints / 2;
     
     deviceData[0] = 0;
-    //deviceData[1] = directaccess[1];
-    //deviceData[1] = ((directaccess[1] >> 1) & 0x1FFFF) | 0x00100000;
-    deviceData[1] = ((directaccess[1] >> 1) & 0x1FFFF);
+    deviceData[1] = directaccess[1] & 0x000FFFFF;
+    //deviceData[1] = ((directaccess[1] >> 1) & 0x1FFFF);
     //double scaler = 80.0 / 125.0;
 
     for(size_t i = 2; i < nints; i += 2) {
@@ -186,9 +185,8 @@ void yarp2device::onRead(emorph::vBottle &bot)
         if(dt < 0) dt += 0xFFFF;
         //deviceData[i] = dt * scaler;
         deviceData[i] = dt;
-    	//deviceData[i] = directaccess[i];
-        //deviceData[i+1] = ((directaccess[i+1] >> 1) & 0x1FFFF) | 0x00100000;
-        deviceData[i+1] = ((directaccess[i+1] >> 1) & 0x1FFFF);
+        deviceData[i+1] = directaccess[i+1] & 0x000FFFFF;
+        //deviceData[i+1] = ((directaccess[i+1] >> 1) & 0x1FFFF);
     } 
 
     //int datawritten = nints;
