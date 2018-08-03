@@ -25,6 +25,8 @@ yarp2device::yarp2device()
     flagStart = false;
     countAEs = 0;
     writtenAEs = 0;
+    //mask = 0x000FFFFF;
+    mask = 0x000003FF;
 }
 
 bool yarp2device::open(std::string moduleName)
@@ -163,6 +165,12 @@ void yarp2device::interrupt()
  }
  }*/
 
+void yarp2device::setWritingMask(int mask)
+{
+    this->mask = mask;
+    std::cout << "Mask is: " << this->mask << std::endl;
+}
+
 void yarp2device::onRead(emorph::vBottle &bot)
 {
 
@@ -176,16 +184,17 @@ void yarp2device::onRead(emorph::vBottle &bot)
     countAEs += nints / 2;
     
     deviceData[0] = 0;
-    deviceData[1] = directaccess[1] & 0x000FFFFF;
+    deviceData[1] = directaccess[1] & mask;
     //deviceData[1] = ((directaccess[1] >> 1) & 0x1FFFF);
     //double scaler = 80.0 / 125.0;
 
     for(size_t i = 2; i < nints; i += 2) {
-        int dt = (directaccess[i] & 0xFFFF) - (directaccess[i-2] & 0xFFFF);
+        //int dt = (directaccess[i] & 0xFFFF) - (directaccess[i-2] & 0xFFFF);
+        int dt = 1;
         if(dt < 0) dt += 0xFFFF;
         //deviceData[i] = dt * scaler;
         deviceData[i] = dt;
-        deviceData[i+1] = directaccess[i+1] & 0x000FFFFF;
+        deviceData[i+1] = directaccess[i+1] & mask;
         //deviceData[i+1] = ((directaccess[i+1] >> 1) & 0x1FFFF);
     } 
 

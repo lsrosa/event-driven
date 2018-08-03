@@ -44,7 +44,7 @@ bool zynqGrabberModule::configure(yarp::os::ResourceFinder &rf) {
 
     // set the loopback (needed only for debug)
     std::string loopBack = rf.check("loopBack", yarp::os::Value("none")).asString(); //add check instead of default value
-
+    int writingMask = rf.check("mask", yarp::os::Value(0x000003FF)).asInt();
 
     //dvs or atis
     std::string chipName = rf.check("chip", yarp::os::Value("DVS")).asString();
@@ -98,6 +98,20 @@ bool zynqGrabberModule::configure(yarp::os::ResourceFinder &rf) {
         return false;
     }
 
+    //open bufferedPort yarp2device
+    if(!Y2D.attachDeviceManager(aerManager))
+    {
+        //could not start the thread
+        return false;
+    }
+
+    Y2D.setWritingMask(writingMask);
+    if(!Y2D.open(moduleName))
+    {
+        std::cerr << " : Unable to open ports" << std::endl;
+        return false;
+    }
+
     //open rateThread device2yarp
     D2Y = new device2yarp();
     if(!D2Y->attachDeviceManager(aerManager))
@@ -110,19 +124,6 @@ bool zynqGrabberModule::configure(yarp::os::ResourceFinder &rf) {
         return false;
     }
     D2Y->start();
-
-
-    //open bufferedPort yarp2device
-    if(!Y2D.attachDeviceManager(aerManager))
-    {
-        //could not start the thread
-        return false;
-    }
-    if(!Y2D.open(moduleName))
-    {
-        std::cerr << " : Unable to open ports" << std::endl;
-        return false;
-    }
 
     // attach a port of the same name as the module (prefixed with a /)
     //to the module so that messages received from the port are redirected to

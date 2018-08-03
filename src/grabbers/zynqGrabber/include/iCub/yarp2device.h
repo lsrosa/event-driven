@@ -31,6 +31,7 @@ class yarp2device : public yarp::os::BufferedPort<emorph::vBottle>
     int           countAEs;
     int           writtenAEs;
     double clockScale;
+    int mask;
 
     aerDevManager* devManager;
 
@@ -49,6 +50,7 @@ public:
     void    onRead(emorph::vBottle &bot);
     void    interrupt();
     bool    attachDeviceManager(deviceManager* devManager);
+    void setWritingMask(int mask);
 
 
 };
