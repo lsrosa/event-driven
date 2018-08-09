@@ -41,12 +41,6 @@ void  device2yarp::run() {
     countAEs += nBytesRead / 8;
     
 
-    if(yarp::os::Time::now() - prevTS > 10) {
-        std::cout << "ZynqGrabber running happily: " << countAEs
-                  << " events" << std::endl;
-        prevTS = yarp::os::Time::now();
-    }
-
     if (!nBytesRead) return;
 
     if(nBytesRead > devManager->getBufferSize()*0.75) {
@@ -54,8 +48,6 @@ void  device2yarp::run() {
                      "device2yarp thread is not delayed" << std::endl;
     }
 
-    static double prevYT = yarp::os::Time::now();
-    static int    prevTS = 0;
     for(int i = 0; i < 0; i+=8) {
         //int *TS =  (int *)(data.data() + i);
         int *AE =  (int *)(data.data() + i + 4);
@@ -66,17 +58,19 @@ void  device2yarp::run() {
         //prevTS = *TS;
     }
 
-    static int skipper = 0;
-    if(skipper++ == 3000) {
-        yInfo() << "Example read: " << (*(int *)data.data()&0x7FFFFFFF) << *(int *)(data.data() + 4);
-        skipper = 0;
-    }
-
-
     sender.setdata(data.data(), nBytesRead);
     vStamp.update();
     portvBottle.setEnvelope(vStamp);
     portvBottle.write(sender); //port is always strict
+
+    static double previous_time = yarp::os::Time::now();
+    double dt = yarp::os::Time::now() - previous_time;
+    if(dt > 3.0) {
+        yInfo() << "[READ] " << 0.000032 * countAEs / dt << " mbps. Example read: " 
+            << (*(int *)data.data()&0x7FFFFFFF) << *(int *)(data.data() + 4);
+        previous_time += dt;
+        countAEs = 0;
+    }
 
     return;
     

@@ -190,7 +190,7 @@ void yarp2device::onRead(emorph::vBottle &bot)
 
     for(size_t i = 2; i < nints; i += 2) {
         //int dt = (directaccess[i] & 0xFFFF) - (directaccess[i-2] & 0xFFFF);
-        int dt = 1;
+        int dt = 0;
         if(dt < 0) dt += 0xFFFF;
         //deviceData[i] = dt * scaler;
         deviceData[i] = dt;
@@ -209,12 +209,13 @@ void yarp2device::onRead(emorph::vBottle &bot)
             yWarning() << "Did not write all data: " << datawritten << " / " << deviceData.size();
     }
 
-    static int messagedelay = 0;
-    if(messagedelay++ > 100) {
-        messagedelay = 0;
-        //std::cout << writtenAEs << " events written to device" << std::endl;
-        yInfo() << writtenAEs << "events written. Example:" << 
-                   deviceData[2] <<  deviceData[3];
+    static double previous_time = yarp::os::Time::now();
+    double dt = yarp::os::Time::now() - previous_time;
+    if(dt > 3.0) {
+        yInfo() << "[WRITE] " << 0.000032 * writtenAEs / dt << " mbps (" 
+            << getPendingReads() << ") .Example:" << deviceData[2] <<  deviceData[3];
+        writtenAEs = 0;
+        previous_time += dt;
     }
 
     return;

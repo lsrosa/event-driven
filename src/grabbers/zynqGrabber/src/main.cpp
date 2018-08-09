@@ -4,6 +4,7 @@
 int main(int argc, char * argv[])
 {
     yarp::os::Network::init();
+    std::cout << "Welcome to the zynqGrabber :)" << std::endl;
 
     zynqGrabberModule module;
 
