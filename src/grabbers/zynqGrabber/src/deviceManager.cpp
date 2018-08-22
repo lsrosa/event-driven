@@ -96,6 +96,26 @@ void deviceManager::closeDevice()
  functions for device read/write
  --------------------------------------------------------------*/
 
+int deviceManager::writeDevice(unsigned char *data, int bytes) {
+    
+    int written = 0;
+    while (written < bytes) {
+
+        int ret = ::write(devDesc, data + written, bytes - written);
+
+        if(ret > 0) {
+            //std::cout << written << std::endl;
+            written += ret;
+        } else if(ret < 0 && errno != EAGAIN) {
+            perror("Error writing because: ");
+            break;
+        }
+    }
+
+    return written;
+
+}
+
 int deviceManager::writeDevice(std::vector<unsigned int> &deviceData){
     /*
      if(writeFifoAFull()){

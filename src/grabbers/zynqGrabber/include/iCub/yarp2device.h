@@ -22,7 +22,7 @@
 /******************************************************************************/
 //yarp2device
 /******************************************************************************/
-class yarp2device : public yarp::os::BufferedPort<emorph::vBottle>
+class yarp2device : public yarp::os::BufferedPort<yarp::os::Bottle>
 {
     int           devDesc;                    // file descriptor for opening device /dev/spinn2neu
     bool          flagStart;                    // flag to check if this is the first time we run the callback,
@@ -47,7 +47,7 @@ public:
     virtual    bool    open(std::string moduleName);
     bool    init();
     void    close();
-    void    onRead(emorph::vBottle &bot);
+    void    onRead(yarp::os::Bottle &bot);
     void    interrupt();
     bool    attachDeviceManager(deviceManager* devManager);
     void setWritingMask(int mask);
