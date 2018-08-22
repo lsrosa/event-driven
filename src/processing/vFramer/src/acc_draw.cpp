@@ -22,19 +22,19 @@
 
 using namespace ev;
 
-const std::string skinDraw::drawtype = "SKIN";
+const std::string accDraw::drawtype = "ACC";
 
-std::string skinDraw::getDrawType()
+std::string accDraw::getDrawType()
 {
-    return skinDraw::drawtype;
+    return accDraw::drawtype;
 }
 
-std::string skinDraw::getEventType()
+std::string accDraw::getEventType()
 {
     return AddressEvent::tag;
 }
 
-void skinDraw::draw(cv::Mat &image, const ev::vQueue &eSet, int vTime)
+void accDraw::draw(cv::Mat &image, const ev::vQueue &eSet, int vTime)
 {
     cv::Scalar pos = CV_RGB(160, 0, 160);
     cv::Scalar neg = CV_RGB(0, 60, 1);
@@ -61,7 +61,7 @@ void skinDraw::draw(cv::Mat &image, const ev::vQueue &eSet, int vTime)
         int y = aep->y;
         int x = aep->x;
 
-        if(x & 0xF == 0xD) //accelerometer
+        if(x & 0xF != 0xD) //accelerometer
             continue;
 
         if(aep->type == 0)
