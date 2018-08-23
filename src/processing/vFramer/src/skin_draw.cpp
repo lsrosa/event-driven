@@ -1,4 +1,4 @@
-/*
+/*)
  *   Copyright (C) 2017 Event-driven Perception for Robotics
  *   Author: arren.glover@iit.it
  *           chiara.bartolozzi@iit.it
@@ -61,9 +61,8 @@ void skinDraw::draw(cv::Mat &image, const ev::vQueue &eSet, int vTime)
         int y = aep->y;
         int x = aep->x;
 
-        if(x & 0xF == 0xD) //accelerometer
+        if((x & 0xF) == 0xD) //accelerometer
             continue;
-
         if(aep->type == 0)
             y = Ylimit - radius;
         else {

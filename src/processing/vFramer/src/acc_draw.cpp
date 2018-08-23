@@ -61,13 +61,16 @@ void accDraw::draw(cv::Mat &image, const ev::vQueue &eSet, int vTime)
         int y = aep->y;
         int x = aep->x;
 
-        if(x & 0xF != 0xD) //accelerometer
+        if((x & 0xF) != 0xD) //accelerometer
             continue;
-
+        x = (x & 0xFF);
         if(aep->type == 0)
             y = Ylimit - radius;
         else {
-            y = radius + y * 200.0 / 255.0;
+            if(y <= 127)
+                y = radius + 100 + y * 100.0 / 127.0;
+            else
+                y = radius + 100 + ((y) * 99.0 / 127.0 - 199.78); //negative half-plane
             //x = x;
         }
 
@@ -85,6 +88,7 @@ void accDraw::draw(cv::Mat &image, const ev::vQueue &eSet, int vTime)
         {
             cv::circle(image, centr, radius, neg, CV_FILLED);
         }
+
     }
 }
 
