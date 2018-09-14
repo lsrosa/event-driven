@@ -4,10 +4,11 @@
 cmake_minimum_required(VERSION 2.6)
 
 set(VLIB_CLOCK_PERIOD_NS 80 CACHE INTEGER "event timestamp clock period (ns)")
-set(VLIB_TIMER_BITS 24 CACHE INTEGER "event timestamp maximum = 2^TIMERBITS")
+set(VLIB_TIMER_BITS 30 CACHE INTEGER "event timestamp maximum = 2^TIMERBITS")
 
 list(APPEND CodecTypes "CODEC_128x128" "CODEC_304x240_20" "CODEC_304x240_24")
-set(VLIB_CODEC_TYPE CACHE STRING "select codec type")
+list(GET CodecTypes 2 VLIB_CODEC_DEFAULT)
+set(VLIB_CODEC_TYPE ${VLIB_CODEC_DEFAULT} CACHE STRING "select codec type")
 set_property(CACHE VLIB_CODEC_TYPE PROPERTY STRINGS ${CodecTypes})
 
 string(COMPARE GREATER ${VLIB_TIMER_BITS} 31 TOOMANYBITSINCOUNTER)
@@ -48,7 +49,6 @@ source_group("Header Files" FILES ${folder_header})
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/include
-    ${YARP_INCLUDE_DIRS}
 )
 
 # Create everything needed to build our library
@@ -63,7 +63,7 @@ target_link_libraries(${EVENTDRIVEN_LIBRARIES} ${YARP_LIBRARIES})
 if(ICUBcontrib_FOUND)
     icubcontrib_export_library(${EVENTDRIVEN_LIBRARIES}
         INTERNAL_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include
-        EXTERNAL_INCLUDE_DIRS ${YARP_INCLUDE_DIRS}
+#        EXTERNAL_INCLUDE_DIRS ${YARP_INCLUDE_DIRS}
         DESTINATION include/iCub/eventdriven
         FILES  ${folder_header}
     )
