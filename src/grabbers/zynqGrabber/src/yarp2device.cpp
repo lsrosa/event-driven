@@ -38,7 +38,7 @@ bool yarp2device::open(std::string moduleName)
 
     fprintf(stdout,"opening port for receiving the events from yarp \n");
 
-    std::string inPortName = "/" + moduleName + "/vBottle:i";
+    std::string inPortName = "/" + moduleName + "/AE:i";
     return yarp::os::BufferedPort< yarp::os::Bottle >::open(inPortName);
 
 }
@@ -84,7 +84,7 @@ void yarp2device::onRead(yarp::os::Bottle &bot)
         deviceData[i] = content->get(i).asInt() & mask;
 
     //int datawritten = nints;
-    int datawritten = devManager->writeDevice((unsigned char *)deviceData.data(), nints*sizeof(int));
+    int datawritten = devManager->writeDevice((const char *)deviceData.data(), nints*sizeof(int));
     datawritten /= sizeof(int);
 
     if(datawritten <= 0)

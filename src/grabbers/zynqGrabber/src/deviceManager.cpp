@@ -96,7 +96,7 @@ void deviceManager::closeDevice()
  functions for device read/write
  --------------------------------------------------------------*/
 
-int deviceManager::writeDevice(unsigned char *data, int bytes) {
+int deviceManager::writeDevice(const char *data, int bytes) {
     
     int written = 0;
     while (written < bytes) {

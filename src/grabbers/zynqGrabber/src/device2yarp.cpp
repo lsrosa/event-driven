@@ -25,7 +25,7 @@ device2yarp::device2yarp() : RateThread(THRATE) {
 bool device2yarp::threadInit(std::string moduleName){
 
     //portvBottle.setStrict();
-    std::string outPortName = "/" + moduleName + "/vBottle:o";
+    std::string outPortName = "/" + moduleName + "/AE:o";
     return portvBottle.open(outPortName);
 
 }
