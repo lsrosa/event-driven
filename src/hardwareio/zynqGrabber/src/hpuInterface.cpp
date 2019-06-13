@@ -147,9 +147,9 @@ void yarp2device::run()
         //std::cout << ".";
         if(!yarp_bottle) return; //when interrupt is called returns null
 
-        Bottle *data_bottle = yarp_bottle->get(1).asList();
+        Bottle data_bottle(*yarp_bottle->get(1).asList());
 
-        size_t data_size = data_bottle->size();
+        size_t data_size = data_bottle.size();
         if(data_size > data_copy.size())
             data_copy.resize(data_size, 0);
 
@@ -157,7 +157,7 @@ void yarp2device::run()
         //we can remove data_copy and just use data_bottle when the
         //mask is done in the FPGA
         for(size_t i = 0; i < data_size; i += 1)
-            data_copy[i] = data_bottle->get(i).asInt();
+            data_copy[i] = data_bottle.get(i).asInt();
 
 
         //move to bytes space
